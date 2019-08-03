@@ -1,0 +1,3 @@
+rootProject.name = 'springboot-aggregation'
+include('springboot-mongodb','springboot-mvc','springboot-webflux')
+
