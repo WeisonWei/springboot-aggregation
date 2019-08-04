@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      database: studentService
+      host: 10.10.10.10
+      port: 27017
