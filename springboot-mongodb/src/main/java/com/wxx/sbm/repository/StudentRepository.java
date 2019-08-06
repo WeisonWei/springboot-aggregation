@@ -14,5 +14,6 @@ public interface StudentRepository extends CrudRepository<Student, ObjectId> {
 
     public Student findStudentByNameIn(List<String> name);
 
+    public Integer deleteStudentByName(String name);
 
 }
