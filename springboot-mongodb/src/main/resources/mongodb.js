@@ -51,11 +51,106 @@ if (!scoresIndexNames.includes('unique_studentId_subject')) {
 // -----------------------------
 var studentsResult = db.students.findOne({"name": "Even"});
 if (studentsResult == null) {
-    db.students.insert({
-        "name": "Even",
-        "age": 11,
-        "sex": "Male",
-        "address": "Xian",
-        "hobbies": ["YuWen", "English"]
-    });
+    db.students.insert([  /* 1 */
+        {
+            "name" : "Even",
+            "age" : 9.0,
+            "sex" : "Male",
+            "address" : "Xian",
+            "hobbies" : [
+                "YuWen",
+                "English"
+            ]
+        },
+        /* 2 */
+        {
+            "name" : "Weison",
+            "age" : 10.0,
+            "sex" : "Male",
+            "address" : "Henan",
+            "hobbies" : [
+                "Wuli",
+                "English"
+            ]
+        },
+        /* 3 */
+        {
+            "name" : "Angule",
+            "age" : 13,
+            "sex" : "Female",
+            "hobbies" : [
+                "YuWen",
+                "English"
+            ],
+            "address" : "Chengdu",
+            "_class" : "com.wxx.sbm.domain.Student"
+        }]);
+}
+
+
+var scoresResult = db.scores.findOne({"studentName": "Even"});
+if (scoresResult == null) {
+    db.scores.insert([/* 1 */
+        {
+            "studentId" : "5d48dc820fd614486f1c1f09",
+            "subject" : "YuWen",
+            "studentName" : "Weison",
+            "subjectScore" : 90
+        },
+        /* 2 */
+        {
+            "studentId" : "5d48dc820fd614486f1c1f09",
+            "subject" : "English",
+            "studentName" : "Weison",
+            "subjectScore" : 98
+        },
+        /* 3 */
+        {
+            "studentId" : "5d48dc820fd614486f1c1f09",
+            "subject" : "ShuXue",
+            "studentName" : "Weison",
+            "subjectScore" : 59
+        },
+        /* 4 */
+        {
+            "studentId" : "5d48dc820fd614486f1c1f08",
+            "subject" : "YuWen",
+            "studentName" : "Even",
+            "subjectScore" : 90
+        },
+        /* 5 */
+        {
+            "studentId" : "5d48dc820fd614486f1c1f08",
+            "subject" : "English",
+            "studentName" : "Even",
+            "subjectScore" : 98
+        },
+        /* 6 */
+        {
+            "studentId" : "5d48dc820fd614486f1c1f08",
+            "subject" : "ShuXue",
+            "studentName" : "Even",
+            "subjectScore" : 59
+        },
+        /* 7 */
+        {
+            "studentId" : "5d48f09b4cf1451aad930f54",
+            "subject" : "YuWen",
+            "studentName" : "Angule",
+            "subjectScore" : 90
+        },
+        /* 8 */
+        {
+            "studentId" : "5d48f09b4cf1451aad930f54",
+            "subject" : "English",
+            "studentName" : "Angule",
+            "subjectScore" : 98
+        },
+        /* 9 */
+        {
+            "studentId" : "5d48f09b4cf1451aad930f54",
+            "subject" : "ShuXue",
+            "studentName" : "Angule",
+            "subjectScore" : 59
+        }]);
 }

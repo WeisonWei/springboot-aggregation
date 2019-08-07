@@ -1,5 +1,7 @@
 package com.wxx.sbm.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.wxx.sbm.common.ObjectIdSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +19,7 @@ import java.util.List;
 @Document(collection = "students")
 public class Student {
     @Id
+    @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId id;
     private String name;
     private Integer age;
@@ -24,4 +27,5 @@ public class Student {
     private List<String> hobbies;
     private String address;
 }
+
 

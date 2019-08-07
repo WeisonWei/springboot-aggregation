@@ -29,12 +29,14 @@ public class StudentService {
         return studentRepository.deleteStudentByName(name);
     }
 
+
     public Student updateStudent(Student student) {
         Student studentByName = studentRepository.findStudentByName(student.getName());
         student.setId(studentByName.getId());
         Student saveStudent = studentRepository.save(student);
         return saveStudent;
     }
+
 
     public Student findStudentById(ObjectId id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
@@ -69,5 +71,7 @@ public class StudentService {
         List<StudentScore> studentScoreList = customizedStudentRepository.findStudentScores();
         return studentScoreList;
     }
+
+
 
 }

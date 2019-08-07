@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import static org.springframework.data.mongodb.core.aggregation.LookupOperation.
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+@Repository
 public class CustomizedStudentRepositoryImpl implements CustomizedStudentRepository {
 
     @Autowired
@@ -39,19 +41,19 @@ public class CustomizedStudentRepositoryImpl implements CustomizedStudentReposit
                         where("hobbies").is("English")));
         List<Student> students = mongoTemplate.find(query, Student.class, "students");
         return students;
-
     }
 
     /**
      * 查询所有童鞋和他们的各科成绩
+     *
      * @return
      */
     public List<StudentScores> findStudentScoreList() {
         Aggregation aggregation = Aggregation.newAggregation(
                 newLookup()
                         .from("scores")
-                        .localField("id")
-                        .foreignField("studentId")
+                        .localField("name")
+                        .foreignField("studentName")
                         .as("scores"),
                 project()
                         .andExpression("name").as("name")
@@ -65,30 +67,33 @@ public class CustomizedStudentRepositoryImpl implements CustomizedStudentReposit
     }
 
     /**
-     * 查询大于"10岁"喜欢"语文"或"英语"的"男孩" 以及他们"英语"成绩
+     * 查询大于"10岁" 喜欢"语文"或"英语" 的"男孩" 的 "英语"成绩
+     *
      * @return
      */
     public List<StudentScore> findStudentScores() {
         Aggregation aggregation = Aggregation.newAggregation(
                 newLookup()
                         .from("scores")
-                        .localField("id")
-                        .foreignField("studentId")
+                        .localField("name")
+                        .foreignField("studentName")
                         .as("scores"),
                 match(where("age").gte(10)
                         .and("sex").is("Male")
-                        .orOperator(where("hobbies").is("YuWen"), where("hobbies").is("English"))
-                        .and("scores.subject").is("English")
-                ),
+                        //.and("scores.subjectScore").gt(60) 这里不生效
+                        .orOperator(where("hobbies").is("YuWen"), where("hobbies").is("English"))),
                 project()
                         .andExpression("name").as("name")
                         .andExpression("age").as("age")
                         .andExpression("sex").as("sex")
                         .andExpression("scores").as("score"),
-                unwind("scoreList"));
+                unwind("score"),
+                match(where("score.subject").is("English")));
 
         AggregationResults<StudentScore> aggregationResults = mongoTemplate.aggregate(aggregation, "students", StudentScore.class);
         List<StudentScore> studentScores = aggregationResults.getMappedResults();
         return studentScores;
     }
 }
+
+
