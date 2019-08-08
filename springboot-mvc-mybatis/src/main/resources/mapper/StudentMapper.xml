@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxx.sbmm.mapper.StudentMapper">
+
+    <!--
+    执行增加操作的SQL语句
+    1.id和parameterType 分别与StudentMapper接口中的addStudent方法的名字和 参数类型一致
+    2.以#{studentName}的形式引用Student参数 的studentName属性，MyBatis将使用反射读取Student参数的此属性
+    3.#{studentName}中studentName大小写敏感。引用其他的属性与此一致
+    4.seGeneratedKeys设置为"true"表明要MyBatis获取由数据库自动生成的主键
+    5.keyProperty="id"指定把获取到的主键值注入到Student的id属性
+    -->
+
+
+    <!-- 当表中字段名跟实体类字段名不一致 或 为了返回list类型 可以定义returnMap -->
+    <resultMap id="studentMap" type="Student">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <result column="hobbies" property="hobbies"/>
+        <result column="address" property="address"/>
+    </resultMap>
+
+    <resultMap id="scoreResultMap" type="Score">
+        <id column="id" property="id"/>
+        <result column="student_id" property="studentId"/>
+        <result column="student_name" property="studentName"/>
+        <result column="subject" property="subject"/>
+        <result column="subject_score" property="subjectScore"/>
+    </resultMap>
+
+
+    <!--增删改查 开始-->
+    <!--新增 1-->
+    <insert id="saveStudent" parameterType="Student" useGeneratedKeys="true" keyProperty="id">
+        insert into t_student(name,age,sex,hobbies,address)
+        values(#{name},#{age},#{sex},#{hobbies},#{address})
+    </insert>
+
+    <!--删除 1-->
+    <delete id="deleteStudentByName" parameterType="String">
+        delete from t_student where name=#{name}
+    </delete>
+    <!--删除 2-->
+    <delete id="deleteByStudent" parameterType="com.wxx.sbmm.domain.Student">
+        delete from t_student where name=#{name}
+    </delete>
+
+    <!--修改 1-->
+    <update id="updateStudent" parameterType="com.wxx.sbmm.domain.Student">
+        update t_student set
+        age = #{age},
+        sex = #{sex},
+        hobbies = #{hobbies},
+        address = #{address},
+        where name=#{name}
+    </update>
+
+    <!--查询 1  -->
+    <select id="findStudentByName" parameterType="String" resultMap="studentMap">
+        SELECT * FROM t_student where name = #{name};
+    </select>
+
+    <!--查询 2 返回list的select语句，注意resultMap的值是指向前面定义好的 -->
+    <select id="findStudents" resultMap="studentMap">
+        select * from t_student
+    </select>
+
+    <!--查询 3 利用 hashMap 传递多个参数 -->
+    <select id="findStudentByMap" parameterType="map" resultType="com.wxx.sbmm.domain.Student">
+        select * from t_student where
+        <where>
+            1=1
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="age != null and age != ''">
+                and age = #{age}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex=#{sex}
+            </if>
+            <if test="hobbies != null and hobbies != ''">
+                and hobbies=#{hobbies}
+            </if>
+            <if test="address != null and address != ''">
+                and address=#{address}
+            </if>
+        </where>
+    </select>
+
+    <!--查询 4 利用 hashMap 传递多个参数 -->
+    <select id="findStudentByStudent" parameterType="Student" resultType="com.wxx.sbmm.domain.Student">
+        select * from t_student where
+        <where>
+            1=1
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="age != null and age != ''">
+                and age = #{age}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex=#{sex}
+            </if>
+            <if test="hobbies != null and hobbies != ''">
+                and hobbies=#{hobbies}
+            </if>
+            <if test="address != null and address != ''">
+                and address=#{address}
+            </if>
+        </where>
+    </select>
+
+    <!--查询 5 Mybatis 自带的多个参数传递方法 这个时候没有 parameterType, 但用到了类似 #{param1} 类似的参数 -->
+    <select id="findStudentByAgeAndSex" resultType="com.wxx.sbmm.domain.Student">
+        select * from t_student where age = #{param1} and sex=#{param2}
+    </select>
+
+
+    <!--增删改查 结束-->
+
+    <!--联合查询 开始-->
+
+
+    <!--联合查询:
+    引入 association 看定义如下 这样配置之后，就可以了，将select语句与resultMap对应的映射结合起来看。
+    用 association 来 得到关联的用户，这是多对一的情况。
+    -->
+    <resultMap id="studentScoresResultMap" type="StudentScores">
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <association property="scoreList" javaType="List">
+            <id column="id" property="id"/>
+            <result column="student_id" property="studentId"/>
+            <result column="student_name" property="studentName"/>
+            <result column="subject_core" property="subjectScore"/>
+        </association>
+    </resultMap>
+
+    <!--
+    复用我们前面已经定义好的resultMap 将association 中对应的映射独立抽取出来，可以达到复用的目的
+    -->
+    <resultMap id="studentScoresAssociationResultMap" type="com.wxx.sbmm.domain.StudentScores">
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="sex" property="sex"/>
+        <association property="scores" javaType="List" resultMap="scoreResultMap"/>
+    </resultMap>
+
+    <!-- 联合查询 1 -->
+
+    <select id="findStudentScores" resultMap="studentScoresResultMap">
+        select a.name,a.age,a.sex,b.id,b.student_id,b.student_name,b.subject,b.subject_score
+        from t_student a,t_score b
+        where
+        a.name=b.name
+    </select>
+    <!-- 联合查询 2 -->
+
+    <select id="findStudentScore" resultMap="studentScoresResultMap">
+        select a.name,a.age,a.sex,b.id,b.student_id,b.student_name,b.subject,b.subject_score
+        from t_student a,t_score b
+        where
+        a.name=b.name
+        and b.subject = 'English'
+    </select>
+
+    <!-- 联合查询 结束 -->
+
+</mapper>

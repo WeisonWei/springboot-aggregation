@@ -1,3 +1,2 @@
 rootProject.name = 'springboot-aggregation'
 include('springboot-mvc-mongodb','springboot-mvc','springboot-webflux','springboot-mvc-mybatis')
-
