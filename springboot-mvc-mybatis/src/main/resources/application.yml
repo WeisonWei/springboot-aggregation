@@ -3,7 +3,6 @@ server:
   port: 8081
   servlet.context-path: /
 
-#日志信息
 logging:
   path: ./
   file: st.log
@@ -21,13 +20,17 @@ logging:
 
 spring:
   data:
+    mongodb:
+      database: studentService
+      host: localhost
+      port: 27017
   datasource:
     # 遇到时区问题用这个
     # jdbc:mysql://localhost:3306?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     url: jdbc:mysql://localhost:3306/studentService?useSSL=false&useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: root
+    password: 12345678
     # schema.sql中一般存放的是DDL脚本，即通常为创建或更新库表的脚本
     # data.sql中一般是DML脚本，即通常为数据插入脚本
     schema: classpath:schema.sql
@@ -42,3 +45,10 @@ spring:
     sql-script-encoding: utf-8
     separator: ;
     # type: com.alibaba.druid.pool.DruidDataSource
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.wxx.sbmm.domain
+  # config-location:
+  configuration:
+    cache-enabled: true

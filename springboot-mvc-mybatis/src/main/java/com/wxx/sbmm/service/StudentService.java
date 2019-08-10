@@ -18,7 +18,7 @@ public class StudentService {
     private StudentMapper studentMapper;
 
 
-    public Student addStudent(Student student) {
+    public Integer addStudent(Student student) {
         return studentMapper.saveStudent(student);
     }
 
@@ -30,7 +30,7 @@ public class StudentService {
         return studentMapper.deleteByStudent(student);
     }
 
-    public Student updateStudent(Student student) {
+    public Integer updateStudent(Student student) {
         return studentMapper.updateStudent(student);
     }
 
@@ -56,8 +56,8 @@ public class StudentService {
         return studentMapper.findStudentByAgeAndSex(age, sex);
     }
 
-    public List<StudentScores> findStudentScores() {
-        return studentMapper.findStudentScores();
+    public StudentScores findStudentScores() {
+        return studentMapper.findStudentScores(2);
     }
 
     public List<StudentScore> findStudentScore() {

@@ -44,17 +44,43 @@
         delete from t_student where name=#{name}
     </delete>
     <!--删除 2-->
-    <delete id="deleteByStudent" parameterType="com.wxx.sbmm.domain.Student">
-        delete from t_student where name=#{name}
+    <delete id="deleteByStudent" parameterType="Student">
+        delete from t_student
+        <where>
+            1=1
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="age != null and age != ''">
+                and age = #{age}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex=#{sex}
+            </if>
+            <if test="hobbies != null and hobbies != ''">
+                and hobbies=#{hobbies}
+            </if>
+            <if test="address != null and address != ''">
+                and address=#{address}
+            </if>
+        </where>
     </delete>
 
     <!--修改 1-->
-    <update id="updateStudent" parameterType="com.wxx.sbmm.domain.Student">
+    <update id="updateStudent" parameterType="Student">
         update t_student set
-        age = #{age},
-        sex = #{sex},
-        hobbies = #{hobbies},
-        address = #{address},
+        <if test="age != null and age != ''">
+            age = #{age},
+        </if>
+        <if test="sex != null and sex != ''">
+            sex = #{sex},
+        </if>
+        <if test="hobbies != null and hobbies != ''">
+            hobbies = #{hobbies},
+        </if>
+        <if test="address != null and address != ''">
+            address = #{address}
+        </if>
         where name=#{name}
     </update>
 
@@ -69,8 +95,8 @@
     </select>
 
     <!--查询 3 利用 hashMap 传递多个参数 -->
-    <select id="findStudentByMap" parameterType="map" resultType="com.wxx.sbmm.domain.Student">
-        select * from t_student where
+    <select id="findStudentByMap" parameterType="Map" resultType="Student">
+        select * from t_student
         <where>
             1=1
             <if test="name != null and name != ''">
@@ -92,8 +118,8 @@
     </select>
 
     <!--查询 4 利用 hashMap 传递多个参数 -->
-    <select id="findStudentByStudent" parameterType="Student" resultType="com.wxx.sbmm.domain.Student">
-        select * from t_student where
+    <select id="findStudentByStudent" parameterType="Student" resultType="Student">
+        select * from t_student
         <where>
             1=1
             <if test="name != null and name != ''">
@@ -129,44 +155,71 @@
     引入 association 看定义如下 这样配置之后，就可以了，将select语句与resultMap对应的映射结合起来看。
     用 association 来 得到关联的用户，这是多对一的情况。
     -->
-    <resultMap id="studentScoresResultMap" type="StudentScores">
-        <result column="name" property="name"/>
-        <result column="age" property="age"/>
-        <result column="sex" property="sex"/>
-        <association property="scoreList" javaType="List">
-            <id column="id" property="id"/>
+    <resultMap id="studentScoresResultMap" type="com.wxx.sbmm.domain.StudentScores">
+        <id column="aid" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" javaType="String" property="name"/>
+        <result column="age" javaType="Integer" property="age"/>
+        <result column="sex" javaType="String" property="sex"/>
+        <collection property="scoreList" javaType="List" ofType="Score">
+            <id column="bid" jdbcType="INTEGER" property="id"/>
             <result column="student_id" property="studentId"/>
             <result column="student_name" property="studentName"/>
             <result column="subject_core" property="subjectScore"/>
-        </association>
+        </collection>
     </resultMap>
 
-    <!--
-    复用我们前面已经定义好的resultMap 将association 中对应的映射独立抽取出来，可以达到复用的目的
-    -->
-    <resultMap id="studentScoresAssociationResultMap" type="com.wxx.sbmm.domain.StudentScores">
-        <result column="name" property="name"/>
-        <result column="age" property="age"/>
-        <result column="sex" property="sex"/>
-        <association property="scores" javaType="List" resultMap="scoreResultMap"/>
+    <!--复用我们前面已经定义好的resultMap 将association 中对应的映射独立抽取出来，可以达到复用的目的-->
+    <resultMap id="studentScoreResultMap" type="com.wxx.sbmm.domain.StudentScore">
+        <id column="id" property="id"/>
+        <result column="name" javaType="String" property="name"/>
+        <result column="age" javaType="Integer" property="age"/>
+        <result column="sex" javaType="String" property="sex"/>
+        <association property="score" javaType="Score">
+            <id column="id" property="id"/>
+            <result column="student_id" property="studentId"/>
+            <result column="student_name" property="studentName"/>
+            <result column="subject" property="subject"/>
+            <result column="subject_score" property="subjectScore"/>
+        </association>
+
     </resultMap>
 
     <!-- 联合查询 1 -->
 
-    <select id="findStudentScores" resultMap="studentScoresResultMap">
-        select a.name,a.age,a.sex,b.id,b.student_id,b.student_name,b.subject,b.subject_score
-        from t_student a,t_score b
-        where
-        a.name=b.name
+    <select id="findStudentScores" parameterType="Integer" resultMap="studentScoresResultMap">
+        select
+        a.id aid,
+        a.name name,
+        a.age age,
+        a.sex sex,
+        b.id bid,
+        b.student_id student_id,
+        b.student_name student_name,
+        b.subject subject,
+        b.subject_score subject_score
+        from t_student a
+        left join t_score b
+        on a.id=b.student_id
+         where a.id=#{id}
     </select>
     <!-- 联合查询 2 -->
 
-    <select id="findStudentScore" resultMap="studentScoresResultMap">
-        select a.name,a.age,a.sex,b.id,b.student_id,b.student_name,b.subject,b.subject_score
-        from t_student a,t_score b
-        where
-        a.name=b.name
-        and b.subject = 'English'
+    <select id="findStudentScore" resultMap="studentScoreResultMap">
+        select
+        b.student_name name,
+        a.age age,
+        a.sex sex,
+        b.id id,
+        b.student_id student_id,
+        b.student_name student_name,
+        b.subject subject,
+        b.subject_score subject_score
+        from t_student a
+        INNER join t_score b
+        on a.id=b.student_id
+        where b.subject = 'English'
+        and a.name = b.student_name
+        and a.name ='Even'
     </select>
 
     <!-- 联合查询 结束 -->

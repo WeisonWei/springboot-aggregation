@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class StudentScores {
+    private Integer id;
     private String name;
     private Integer age;
     private String sex;

@@ -14,13 +14,13 @@ import java.util.Map;
 public interface StudentMapper {
 
     // 增删改查
-    Student saveStudent(Student student);
+    Integer saveStudent(Student student);
 
     Integer deleteStudentByName(@Param("name") String name);
 
     Integer deleteByStudent(Student student);
 
-    Student updateStudent(Student student);
+    Integer updateStudent(Student student);
 
     // 5种查询
     Student findStudentByName(@Param("name") String name);
@@ -34,7 +34,7 @@ public interface StudentMapper {
     List<Student> findStudentByAgeAndSex(Integer age, String sex);
 
     // 关联查询
-    List<StudentScores> findStudentScores();
+    StudentScores findStudentScores(@Param("id") Integer id);
 
     List<StudentScore> findStudentScore();
 

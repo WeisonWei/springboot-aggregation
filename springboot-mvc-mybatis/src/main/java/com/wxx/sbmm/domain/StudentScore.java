@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class StudentScore {
+    private Integer id;
     private String name;
     private Integer age;
     private String sex;

@@ -17,9 +17,9 @@ public class StudentController {
     private StudentService studentService;
 
     @PostMapping("/students")
-    public Student saveStudent(@RequestBody Student student) {
-        Student addStudent = studentService.addStudent(student);
-        return addStudent;
+    public Integer saveStudent(@RequestBody Student student) {
+        Integer addNum = studentService.addStudent(student);
+        return addNum;
     }
 
     @DeleteMapping("/students/{name}")
@@ -35,9 +35,9 @@ public class StudentController {
     }
 
     @PutMapping("/students")
-    public Student updateStudent(@RequestBody Student student) {
-        Student updateStudent = studentService.updateStudent(student);
-        return updateStudent;
+    public Integer updateStudent(@RequestBody Student student) {
+        Integer updateNum = studentService.updateStudent(student);
+        return updateNum;
     }
 
     @GetMapping("/students/{name}")
@@ -55,14 +55,14 @@ public class StudentController {
     @GetMapping("/students/map")
     public List<Student> findStudentByMap() {
         Map<String, String> map = new HashMap<>();
-        map.put("name", "Evwn");
+        map.put("name", "Even");
         List<Student> studentList = studentService.findStudentByMap(map);
         return studentList;
     }
 
     @GetMapping("/students/st")
     public List<Student> findStudentByStudent() {
-        List<Student> studentList = studentService.findStudentByStudent(Student.builder().build());
+        List<Student> studentList = studentService.findStudentByStudent(Student.builder().name("Even").build());
         return studentList;
     }
 
@@ -73,8 +73,8 @@ public class StudentController {
     }
 
     @GetMapping("/students/scores")
-    public List<StudentScores> findStudentScores() {
-        List<StudentScores> studentList = studentService.findStudentScores();
+    public StudentScores findStudentScores() {
+        StudentScores studentList = studentService.findStudentScores();
         return studentList;
     }
 
