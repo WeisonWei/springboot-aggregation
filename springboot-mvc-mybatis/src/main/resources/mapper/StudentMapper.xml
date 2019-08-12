@@ -94,6 +94,11 @@
         select * from t_student
     </select>
 
+    <!--查询 2 返回list的select语句，注意resultMap的值是指向前面定义好的 -->
+    <select id="findScores" resultMap="scoreResultMap">
+        select * from t_score
+    </select>
+
     <!--查询 3 利用 hashMap 传递多个参数 -->
     <select id="findStudentByMap" parameterType="Map" resultType="Student">
         select * from t_student
@@ -153,40 +158,39 @@
 
     <!--联合查询:
     引入 association 看定义如下 这样配置之后，就可以了，将select语句与resultMap对应的映射结合起来看。
-    用 association 来 得到关联的用户，这是多对一的情况。
-    -->
-    <resultMap id="studentScoresResultMap" type="com.wxx.sbmm.domain.StudentScores">
+    用 association 来 得到关联的用户，这是多对一的情况。-->
+    <resultMap id="studentScoreListResultMap" type="com.wxx.sbmm.domain.StudentScores">
         <id column="aid" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" javaType="String" property="name"/>
         <result column="age" javaType="Integer" property="age"/>
         <result column="sex" javaType="String" property="sex"/>
         <collection property="scoreList" javaType="List" ofType="Score">
             <id column="bid" jdbcType="INTEGER" property="id"/>
-            <result column="student_id" property="studentId"/>
-            <result column="student_name" property="studentName"/>
-            <result column="subject_core" property="subjectScore"/>
+            <result property="studentId" column="student_id"/>
+            <result property="studentName" column="student_name"/>
+            <result property="subject" column="subject"/>
+            <result property="subjectScore" column="subject_score"/>
         </collection>
     </resultMap>
 
     <!--复用我们前面已经定义好的resultMap 将association 中对应的映射独立抽取出来，可以达到复用的目的-->
     <resultMap id="studentScoreResultMap" type="com.wxx.sbmm.domain.StudentScore">
-        <id column="id" property="id"/>
-        <result column="name" javaType="String" property="name"/>
-        <result column="age" javaType="Integer" property="age"/>
-        <result column="sex" javaType="String" property="sex"/>
-        <association property="score" javaType="Score">
-            <id column="id" property="id"/>
-            <result column="student_id" property="studentId"/>
-            <result column="student_name" property="studentName"/>
-            <result column="subject" property="subject"/>
-            <result column="subject_score" property="subjectScore"/>
+        <id column="aid" jdbcType="BIGINT" javaType="Integer" property="id"/>
+        <result property="name" jdbcType="VARCHAR" javaType="String" column="name"/>
+        <result property="age" column="age" jdbcType="VARCHAR" javaType="Integer"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR" javaType="String"/>
+        <association property="score" javaType="com.wxx.sbmm.domain.Score">
+            <id property="id" column="bid"/>
+            <result property="studentId" column="student_id"/>
+            <result property="studentName" column="student_name"/>
+            <result property="subject" column="subject"/>
+            <result property="subjectScore" column="subject_score"/>
         </association>
-
     </resultMap>
 
-    <!-- 联合查询 1 -->
+    <!-- 联合查询 1 findStudentScores-->
 
-    <select id="findStudentScores" parameterType="Integer" resultMap="studentScoresResultMap">
+    <select id="findStudentScores" parameterType="Integer" resultMap="studentScoreListResultMap">
         select
         a.id aid,
         a.name name,
@@ -200,28 +204,25 @@
         from t_student a
         left join t_score b
         on a.id=b.student_id
-         where a.id=#{id}
     </select>
-    <!-- 联合查询 2 -->
-
+    <!-- 联合查询 2 findStudentScore-->
     <select id="findStudentScore" resultMap="studentScoreResultMap">
         select
-        b.student_name name,
+        a.id aid,
+        a.name name,
         a.age age,
         a.sex sex,
-        b.id id,
+        b.id bid,
         b.student_id student_id,
         b.student_name student_name,
         b.subject subject,
         b.subject_score subject_score
         from t_student a
-        INNER join t_score b
+        left join t_score b
         on a.id=b.student_id
         where b.subject = 'English'
         and a.name = b.student_name
-        and a.name ='Even'
     </select>
-
     <!-- 联合查询 结束 -->
 
 </mapper>

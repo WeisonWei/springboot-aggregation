@@ -4,7 +4,6 @@ import com.wxx.sbmm.domain.Student;
 import com.wxx.sbmm.domain.StudentScore;
 import com.wxx.sbmm.domain.StudentScores;
 import com.wxx.sbmm.mapper.StudentMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -56,8 +55,8 @@ public class StudentService {
         return studentMapper.findStudentByAgeAndSex(age, sex);
     }
 
-    public StudentScores findStudentScores() {
-        return studentMapper.findStudentScores(2);
+    public List<StudentScores> findStudentScores() {
+        return studentMapper.findStudentScores();
     }
 
     public List<StudentScore> findStudentScore() {

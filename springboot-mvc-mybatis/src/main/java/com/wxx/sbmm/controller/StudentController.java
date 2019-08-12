@@ -73,8 +73,8 @@ public class StudentController {
     }
 
     @GetMapping("/students/scores")
-    public StudentScores findStudentScores() {
-        StudentScores studentList = studentService.findStudentScores();
+    public List<StudentScores> findStudentScores() {
+        List<StudentScores> studentList = studentService.findStudentScores();
         return studentList;
     }
 

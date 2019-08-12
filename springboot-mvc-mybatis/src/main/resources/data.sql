@@ -1,4 +1,4 @@
-/*INSERT INTO t_student (name,age, sex, hobbies,  address)
+INSERT INTO t_student (name,age, sex, hobbies,  address)
   SELECT "Even",9,"Male","ShuXue,English","XiAn" FROM DUAL WHERE NOT EXISTS(SELECT 1 FROM t_student WHERE name = "Even");
 INSERT INTO t_student (name,age, sex, hobbies,  address)
   SELECT "Weison",11,"Male","XuWen,WuLi","HeNan" FROM DUAL WHERE NOT EXISTS(SELECT 1 FROM t_student WHERE name = "Weison");
@@ -30,4 +30,4 @@ INSERT INTO t_score (student_id,student_name, subject,  subject_score)
 INSERT INTO t_score (student_id,student_name, subject,  subject_score)
   SELECT 3,"Angule","English",91 FROM DUAL WHERE NOT EXISTS(SELECT 1 FROM t_score WHERE student_name = "Angule" and subject ="English");
 
-commit;*/
+commit;

@@ -34,7 +34,7 @@ public interface StudentMapper {
     List<Student> findStudentByAgeAndSex(Integer age, String sex);
 
     // 关联查询
-    StudentScores findStudentScores(@Param("id") Integer id);
+    List<StudentScores> findStudentScores();
 
     List<StudentScore> findStudentScore();
 
